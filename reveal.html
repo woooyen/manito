@@ -3,30 +3,97 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>마니또 확인</title>
+<title>🎁 마니또 확인</title>
 <style>
-  body { font-family: sans-serif; text-align: center; padding-top: 25vh; }
-  button { font-size: 20px; padding: 14px 32px; border: 0; border-radius: 8px;
-           background: #e8523f; color: #fff; cursor: pointer; }
-  #result { font-size: 32px; margin-top: 24px; display: none; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 32px 16px;
+    font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: linear-gradient(160deg, #14532d, #0b2e22);
+    display: flex; justify-content: center; align-items: flex-start;
+  }
+  .card {
+    width: 100%; max-width: 440px; background: #fffaf0; color: #2b2b2b;
+    border-radius: 20px; padding: 32px 24px; text-align: center;
+    border-top: 8px solid #c0392b; box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  .sub { color: #777; margin: 0 0 24px; font-size: 15px; }
+  button {
+    font-size: 20px; padding: 14px 36px; border: 0; border-radius: 999px;
+    background: #c0392b; color: #fff; cursor: pointer; font-weight: 700;
+  }
+  button:active { transform: scale(.97); }
+  #result, #err { display: none; }
+  .who { font-size: 16px; color: #555; margin: 0; }
+  .target {
+    font-size: 36px; font-weight: 800; color: #c0392b; margin: 8px 0 20px;
+    animation: pop .6s ease;
+  }
+  @keyframes pop { 0% { transform: scale(.3); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  .info { background: #fff; border-radius: 12px; padding: 14px 16px; text-align: left; line-height: 1.9; font-size: 15px; }
+  h2 { font-size: 17px; color: #1e6b4a; margin: 26px 0 10px; }
+  .rule { text-align: left; background: #f1f8f4; border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; font-size: 14.5px; line-height: 1.7; }
+  .rule b { display: block; margin-bottom: 2px; color: #1e6b4a; }
+  .foot { margin-top: 24px; line-height: 1.8; font-size: 15px; }
+  .small { color: #888; font-size: 13px; }
 </style>
 </head>
 <body>
-  <h2>🎁 나의 마니또는?</h2>
-  <button id="btn">확인하기</button>
-  <div id="result"></div>
+<div class="card">
+
+  <div id="intro">
+    <h1>🎄 마니또 확인 🎄</h1>
+    <p class="sub">버튼을 누르면 나의 마니또가 공개됩니다</p>
+    <button id="btn">🎁 확인하기</button>
+  </div>
+
+  <div id="err">링크가 올바르지 않습니다. 메일의 버튼으로 다시 들어와 주세요.</div>
+
+  <div id="result">
+    <p class="who">👉 <b id="me"></b> 님의 마니또는 바로~</p>
+    <div class="target" id="to"></div>
+
+    <div class="info">
+      📅 <b>날짜</b> : 12월 12일<br>
+      📍 <b>장소</b> : 추후 공지<br>
+      🕒 <b>시간</b> : 추후 공지
+    </div>
+
+    <h2>🎄 M A N I T T O &nbsp; R U L E S 🎄</h2>
+
+    <div class="rule"><b>💰 선물 예산</b>최대 15,000원 내에서 센스 있게 준비해주세요! 😉</div>
+    <div class="rule"><b>🎁 선물 규칙</b>
+      중고, 재탕 ❌ 절대 금지, 무조건 새상품!<br>
+      상대 취향 완벽은 아니어도 최소 1회 이상은 사용할 수 있는 아이템!</div>
+    <div class="rule"><b>🎀 추가 미션</b>
+      받은 선물은 최소 1번은 꼭 사용하기!<br>
+      당일엔 모두의 선물을 보고 ✨MVP 투표✨도 진행됩니다!
+      <span class="small">(사실 생각한거 없습니다)</span></div>
+
+    <div class="foot">
+      다들 센스 폭발 선물 기대해요! 💫<br>
+      즐겁고 따뜻한 마니또 시간 보내면서 설렘 가득! 🎅<br>
+      <b>12월 12일, 봅시다~! 🎄</b>
+    </div>
+  </div>
+
+</div>
 <script>
-  document.getElementById("btn").onclick = () => {
+  const $ = id => document.getElementById(id);
+  $("btn").onclick = () => {
     try {
       const t = location.hash.slice(1).replace(/-/g, "+").replace(/_/g, "/");
       const bytes = Uint8Array.from(atob(t), c => c.charCodeAt(0));
-      const name = new TextDecoder().decode(bytes);
-      document.getElementById("result").textContent = name + " 님";
+      const d = JSON.parse(new TextDecoder().decode(bytes));
+      $("me").textContent = d.me;
+      $("to").textContent = d.to + " 님";
+      $("intro").style.display = "none";
+      $("result").style.display = "block";
     } catch (e) {
-      document.getElementById("result").textContent = "링크가 올바르지 않습니다.";
+      $("intro").style.display = "none";
+      $("err").style.display = "block";
     }
-    document.getElementById("result").style.display = "block";
-    document.getElementById("btn").style.display = "none";
   };
 </script>
 </body>
