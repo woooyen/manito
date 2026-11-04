@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마니또 확인</title>
+<style>
+  body { font-family: sans-serif; text-align: center; padding-top: 25vh; }
+  button { font-size: 20px; padding: 14px 32px; border: 0; border-radius: 8px;
+           background: #e8523f; color: #fff; cursor: pointer; }
+  #result { font-size: 32px; margin-top: 24px; display: none; }
+</style>
+</head>
+<body>
+  <h2>🎁 나의 마니또는?</h2>
+  <button id="btn">확인하기</button>
+  <div id="result"></div>
+<script>
+  document.getElementById("btn").onclick = () => {
+    try {
+      const t = location.hash.slice(1).replace(/-/g, "+").replace(/_/g, "/");
+      const bytes = Uint8Array.from(atob(t), c => c.charCodeAt(0));
+      const name = new TextDecoder().decode(bytes);
+      document.getElementById("result").textContent = name + " 님";
+    } catch (e) {
+      document.getElementById("result").textContent = "링크가 올바르지 않습니다.";
+    }
+    document.getElementById("result").style.display = "block";
+    document.getElementById("btn").style.display = "none";
+  };
+</script>
+</body>
+</html>
